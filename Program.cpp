@@ -18,7 +18,7 @@ void Program::generatePackets(const std::string &outputFile)
         {
             string destAddress = (config.EthDestAddress);
             string srcAddress = (config.EthSourceAddress);
-            string ethernetType = "0800";
+            string ethernetType = "AEFE";
             string payload = "";
             int payloadSize = config.EthMaxPacketSize - (7 + 1 + 6 + 6 + 2 + 4 + config.EthMinNumOfIFGsPerPacket);
             while (payloadSize != 0)
