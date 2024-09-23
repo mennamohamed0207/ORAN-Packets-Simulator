@@ -3,7 +3,7 @@
 using namespace std;
 class ECPRI{
     public:
-        // Octet 1
+        // Octet 1 
         string version;
         string reserved;
         string contcatention;
@@ -14,8 +14,9 @@ class ECPRI{
         //Octet 5-6
         string pId;
         //Octet 7
-        string seqId;
+        static int seqId;
         //Octet 9-16
         ORAN ORANPacket;
+        ECPRI();
 
 };
