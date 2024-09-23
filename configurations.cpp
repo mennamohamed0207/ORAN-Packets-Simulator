@@ -93,8 +93,6 @@ void configurations::readConfigurations(string configurationFile)
         else if (line.find("Eth.CaptureSizeMs") != std::string::npos)
         {
             EthCaptureSizeMs = getNumberAfterEqual(line);
-            // To convert from ms to us
-            EthCaptureSizeMs = EthCaptureSizeMs * 1000;
         }
         else if (line.find("Eth.MinNumOfIFGsPerPacket") != std::string::npos)
         {
@@ -119,7 +117,10 @@ void configurations::readConfigurations(string configurationFile)
         else if (line.find("Oran.MaxNrb") != std::string::npos)
         {
             OranMaxNrb = getNumberAfterEqual(line);
+            if (OranMaxNrb == 0)
+                OranMaxNrb = 273;
         }
+
         else if (line.find("Oran.NrbPerPacket") != std::string::npos)
         {
             OranNrbPerPacket = getNumberAfterEqual(line);

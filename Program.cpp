@@ -7,8 +7,23 @@ using namespace std;
 
 void Program::generatePackets(const std::string &outputFile)
 {
-    int numberOfFrames=config.EthCaptureSizeMs/10; //For frame id purposes
-    
+    int packetsPerSymbol = ceil(config.OranMaxNrb*1.0 / config.OranNrbPerPacket);
+    int symbolPerSlot = 14; // Assum normal cyclic prefix
+    int packetsPerSlot = packetsPerSymbol * symbolPerSlot;
+    int mu = log2(config.OranSCS / 15.0);
+    int slotsPerSubframe = pow(2, mu);
+    int packetsPerSecond=packetsPerSlot*slotsPerSubframe*(1000/config.EthCaptureSizeMs);
+    int bitsPerPacket=packetsPerSecond*12*config.OranNrbPerPacket*16*2;
+    int bytesPerPacket=bitsPerPacket/8;
+    if(bytesPerPacket<config.EthMaxPacketSize) //No fragmentation
+    {
+        cout<<"No fragmentation "<<config.EthMaxPacketSize<<endl;
+        cout<<bytesPerPacket<<endl;
+
+    }else { //Fragmentation
+        cout<<"Fragmentation"<<endl;
+        cout<<bytesPerPacket<<endl;
+    }
 
 }
 
