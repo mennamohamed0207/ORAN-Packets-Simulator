@@ -16,13 +16,18 @@ public:
     string EthDestAddress;
     string EthSourceAddress;
     int EthMaxPacketSize;
-    int EthBurstSize;
-    int EthBurstPeriodicity_us;
+    
     void readConfigurations(string configurationFile);
     void printConfigurations();
+    int OranSCS;
+    int OranMaxNrb;
+    int OranNrbPerPacket;
+    string OranPayloadType;
+    string OranPayload;
 
 private:
     int getNumberAfterEqual(const std::string &str);
     string getAddress(const std::string &str);
+    string getString(const std::string &str);
 };
-#endif // CONFIGURATIONS_H
+#endif

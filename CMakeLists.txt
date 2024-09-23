@@ -6,7 +6,7 @@ set(CMAKE_C_COMPILER "C:\\Users\\dell\\Downloads\\gcc-13.2.0-no-debug\\bin\\gcc.
 set(CMAKE_CXX_COMPILER "C:\\Users\\dell\\Downloads\\gcc-13.2.0-no-debug\\bin\\g++.exe")
 
 # Define the project name
-project(EthernetSimulator)
+project(ORANPacketsSimulator)
 # Set the C++ standard 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -14,13 +14,15 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=1")
 
 # Add the executable 
-add_executable(EthernetSimulator 
+add_executable(ORANPacketsSimulator 
         main.cpp 
         Program.cpp 
         configurations.cpp 
         parser.cpp 
         Packet.cpp
+        ECPRI.cpp
+        ORAN.cpp
 )
 
 # Link the JSON library
-target_compile_options(EthernetSimulator PRIVATE -Wall)
+target_compile_options(ORANPacketsSimulator PRIVATE -Wall)

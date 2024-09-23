@@ -8,8 +8,6 @@ configurations::configurations()
     EthDestAddress = "";
     EthSourceAddress = "";
     EthMaxPacketSize = 0;
-    EthBurstSize = 0;
-    EthBurstPeriodicity_us = 0;
 }
 void configurations::printConfigurations()
 {
@@ -19,8 +17,12 @@ void configurations::printConfigurations()
     std::cout << "EthDestAddress: " << EthDestAddress << std::endl;
     std::cout << "EthSourceAddress: " << EthSourceAddress << std::endl;
     std::cout << "EthMaxPacketSize: " << EthMaxPacketSize << std::endl;
-    std::cout << "EthBurstSize: " << EthBurstSize << std::endl;
-    std::cout << "EthBurstPeriodicity_us: " << EthBurstPeriodicity_us << std::endl;
+
+    std::cout << "OranSCS: " << OranSCS << std::endl;
+    std::cout << "OranMaxNrb: " << OranMaxNrb << std::endl;
+    std::cout << "OranNrbPerPacket: " << OranNrbPerPacket << std::endl;
+    std::cout << "OranPayloadType: " << OranPayloadType << std::endl;
+    std::cout << "OranPayload: " << OranPayload << std::endl;
 }
 int configurations::getNumberAfterEqual(const std::string &str)
 {
@@ -56,6 +58,21 @@ string configurations::getAddress(const std::string &str)
         return "";
     }
 }
+string configurations::getString(const std::string &str)
+{
+    size_t pos = str.find('=');
+
+    if (pos != std::string::npos)
+    {
+        std::string text = str.substr(pos + 1);
+        return text;
+    }
+    else
+    {
+        std::cerr << "Error: '=' not found in the string!" << std::endl;
+        return "";
+    }
+}
 void configurations::readConfigurations(string configurationFile)
 {
     std::ifstream file(configurationFile);
@@ -68,6 +85,7 @@ void configurations::readConfigurations(string configurationFile)
     std::string line;
     while (std::getline(file, line))
     {
+        cout << line << endl;
         if (line.find("Eth.LineRate") != std::string::npos)
         {
             EthLineRate = getNumberAfterEqual(line);
@@ -75,8 +93,8 @@ void configurations::readConfigurations(string configurationFile)
         else if (line.find("Eth.CaptureSizeMs") != std::string::npos)
         {
             EthCaptureSizeMs = getNumberAfterEqual(line);
-            //To convert from ms to us
-            EthCaptureSizeMs=EthCaptureSizeMs*1000; 
+            // To convert from ms to us
+            EthCaptureSizeMs = EthCaptureSizeMs * 1000;
         }
         else if (line.find("Eth.MinNumOfIFGsPerPacket") != std::string::npos)
         {
@@ -94,16 +112,28 @@ void configurations::readConfigurations(string configurationFile)
         {
             EthMaxPacketSize = getNumberAfterEqual(line);
         }
-        else if (line.find("Eth.BurstSize") != std::string::npos)
+        else if (line.find("Oran.SCS") != std::string::npos)
         {
-            EthBurstSize = getNumberAfterEqual(line);
+            OranSCS = getNumberAfterEqual(line);
         }
-        else if (line.find("Eth.BurstPeriodicity_us") != std::string::npos)
+        else if (line.find("Oran.MaxNrb") != std::string::npos)
         {
-            EthBurstPeriodicity_us = getNumberAfterEqual(line);
+            OranMaxNrb = getNumberAfterEqual(line);
+        }
+        else if (line.find("Oran.NrbPerPacket") != std::string::npos)
+        {
+            OranNrbPerPacket = getNumberAfterEqual(line);
+        }
+        else if (line.find("Oran.PayloadType") != std::string::npos)
+        {
+            OranPayloadType = getString(line);
+        }
+        else if (line.find("Oran.Payload") != std::string::npos)
+        {
+            OranPayload = getString(line);
         }
     }
-    // printConfigurations();
+    printConfigurations();
 
     file.close();
 }
