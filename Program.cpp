@@ -7,6 +7,9 @@ using namespace std;
 
 void Program::generatePackets(const std::string &outputFile)
 {
+    int numberOfFrames=config.EthCaptureSizeMs/10; //For frame id purposes
+    
+
 }
 
 long long Program::calculateNumberOfBursts()

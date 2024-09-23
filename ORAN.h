@@ -28,6 +28,8 @@ class ORAN{
     //rest of packet
     string iqSamples;
 
+    ORAN();
+
 
 
 };
