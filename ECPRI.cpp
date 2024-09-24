@@ -1,4 +1,6 @@
 #include "ECPRI.h"
+#include <iomanip>
+#include <sstream>
 ECPRI::ECPRI(ORAN oranpacket)
 : ORANPacket(oranpacket)
 {
@@ -9,11 +11,21 @@ ECPRI::ECPRI(ORAN oranpacket)
     seqId++;
     if (seqId == 255)
         seqId = 0;
-    // this->ORANPacket = oranpacket;
 }
 int ECPRI::seqId = 0;
 
 string ECPRI::getECPRI()
 {
-    return this->version + this->reserved + this->contcatention + this->message + this->payload + this->pId+to_string(seqId)+this->ORANPacket.getORAN();
+    return this->version + this->reserved + this->contcatention + this->message + this->payload + this->pId+putIdIntoStringTwoByte(seqId)+this->ORANPacket.getORAN();
+}
+
+string ECPRI::putIdIntoStringTwoByte(int id)
+{
+    if (id < 0 || id > 65535)
+    {
+        throw std::out_of_range("Number must be between 0 and 65535");
+    }
+    std::stringstream stream;
+    stream << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << id;
+    return stream.str();
 }

@@ -12,7 +12,11 @@ ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId)
 }
 string ORAN::getORAN()
 {
-    return this->dataDirection + this->payloadVersion + this->filterIndex + (this->frameId) + (this->subframeId) + (this->slotId)  + (this->symbolId) + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
+    return this->dataDirection + this->payloadVersion + this->filterIndex + 
+    "FrameID"+(this->frameId) + 
+    "subFrameID"+(this->subframeId) + 
+    "slotID"+(this->slotId)  + 
+    "symbolID"+(this->symbolId) + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
 }
 string ORAN::putIdIntoStringOneByte(int id)
 {

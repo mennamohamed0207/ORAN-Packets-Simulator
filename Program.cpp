@@ -20,16 +20,16 @@ void Program::generatePackets(const std::string &outputFile)
     int bytesPerPacket = bitsPerPacket / 8;
     int packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     int packetsPerFrame = packetsPerSubframe * 10;
-    if (bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
+    if (true||bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
         cout << "No fragmentation " << endl;
         cout << bytesPerPacket << endl;
         int numberOfPackets = packetsPerSecond * (1000 / config.EthCaptureSizeMs);
 
-        int frameId = 1;
-        int subframeId = 1;
-        int slotId = 1;
-        int symbolId = 1;
+        int frameId = 0;
+        int subframeId = 0;
+        int slotId = 0;
+        int symbolId = 0;
 
         for (int i = 0; i < numberOfPackets; ++i)
         {
@@ -52,7 +52,7 @@ void Program::generatePackets(const std::string &outputFile)
             {
                 frameId++;
             }
-
+            if(i==30) break;
             ORAN oran(frameId, subframeId, slotId, symbolId);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
