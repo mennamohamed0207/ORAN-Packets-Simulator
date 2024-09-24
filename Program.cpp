@@ -7,6 +7,8 @@ using namespace std;
 
 void Program::generatePackets(const std::string &outputFile)
 {
+    std::ofstream out(outputFile);
+
     int numberOfFrames = config.EthCaptureSizeMs / 10;
     int packetsPerSymbol = ceil(config.OranMaxNrb * 1.0 / config.OranNrbPerPacket);
     int symbolPerSlot = 14; // Assum normal cyclic prefix
@@ -53,7 +55,8 @@ void Program::generatePackets(const std::string &outputFile)
 
             ORAN oran(frameId, subframeId, slotId, symbolId);
             ECPRI ecpri(oran);
-            Packet p(destAddress, srcAddress, "AEFE",ecpri.getECPRI());
+            Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
+            out<<p.getPacket() << endl;
         }
     }
     else
@@ -61,6 +64,7 @@ void Program::generatePackets(const std::string &outputFile)
         cout << "Fragmentation" << endl;
         cout << bytesPerPacket << endl;
     }
+    out.close();
 }
 
 long long Program::calculateNumberOfBursts()

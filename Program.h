@@ -3,6 +3,7 @@
 #include <string>
 #include "configurations.h"
 #include "Packet.h"
+#include "ECPRI.h"
 #include <vector>
 #ifndef PROGRAM_H
 #define PROGRAM_H

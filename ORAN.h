@@ -28,7 +28,7 @@ class ORAN{
     //rest of packet
     string iqSamples;
 
-    ORAN();
+    // ORAN();
     ORAN(int frameId, int subframeId, int slotId, int symbolId);
     string getORAN();
 

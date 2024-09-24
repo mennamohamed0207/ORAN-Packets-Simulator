@@ -1,6 +1,6 @@
 #include "ORAN.h"
 
-ORAN::ORAN()
+ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId)
 {
     this->dataDirection + this->payloadVersion + this->filterIndex = "00";
 }

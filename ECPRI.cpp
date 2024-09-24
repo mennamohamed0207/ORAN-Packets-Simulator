@@ -1,5 +1,6 @@
 #include "ECPRI.h"
 ECPRI::ECPRI(ORAN oranpacket)
+: ORANPacket(oranpacket)
 {
     this->version = "0";
     this->reserved + this->contcatention = "0";
@@ -8,7 +9,7 @@ ECPRI::ECPRI(ORAN oranpacket)
     seqId++;
     if (seqId == 255)
         seqId = 0;
-    this->ORANPacket = oranpacket;
+    // this->ORANPacket = oranpacket;
 }
 int ECPRI::seqId = 0;
 
