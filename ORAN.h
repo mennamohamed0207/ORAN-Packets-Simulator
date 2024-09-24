@@ -28,7 +28,7 @@ class ORAN{
     string iqSamples;
 
     // ORAN();
-    ORAN(int frameId, int subframeId, int slotId, int symbolId);
+    ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName);
     string getORAN();
     string putIdIntoStringOneByte(int id);
     string putIdIntoStringSixbits(int id );

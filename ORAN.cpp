@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <sstream>
 
-ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId)
+ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName)
 {
     this->dataDirection + this->payloadVersion + this->filterIndex = "00";
     this->frameId = putIdIntoStringOneByte(frameId);
@@ -13,10 +13,10 @@ ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId)
 string ORAN::getORAN()
 {
     return this->dataDirection + this->payloadVersion + this->filterIndex + 
-    "FrameID"+(this->frameId) + 
-    "subFrameID"+(this->subframeId) + 
-    "slotID"+(this->slotId)  + 
-    "symbolID"+(this->symbolId) + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
+    (this->frameId) + 
+    (this->subframeId) + 
+    (this->slotId)  + 
+    (this->symbolId) + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
 }
 string ORAN::putIdIntoStringOneByte(int id)
 {

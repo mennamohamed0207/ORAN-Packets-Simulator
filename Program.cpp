@@ -53,7 +53,7 @@ void Program::generatePackets(const std::string &outputFile)
                 frameId++;
             }
             if(i==30) break;
-            ORAN oran(frameId, subframeId, slotId, symbolId);
+            ORAN oran(frameId, subframeId, slotId, symbolId,config.OranPayload);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
             out<<p.getPacket() << endl;
