@@ -2,6 +2,7 @@
 #include <vector>
 #include <cstdint>
 #include <iomanip>
+#include "ECPRI.h"
 using namespace std;
 #ifndef PACKET_H
 #define PACKET_H
@@ -41,6 +42,7 @@ public:
     void setPayload(string payload);
     void setCRC(string CRC);
     void setIFG(string IFG);
+    
 };
 #endif 
 

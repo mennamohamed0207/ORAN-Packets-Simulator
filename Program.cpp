@@ -7,24 +7,60 @@ using namespace std;
 
 void Program::generatePackets(const std::string &outputFile)
 {
-    int packetsPerSymbol = ceil(config.OranMaxNrb*1.0 / config.OranNrbPerPacket);
+    int numberOfFrames = config.EthCaptureSizeMs / 10;
+    int packetsPerSymbol = ceil(config.OranMaxNrb * 1.0 / config.OranNrbPerPacket);
     int symbolPerSlot = 14; // Assum normal cyclic prefix
     int packetsPerSlot = packetsPerSymbol * symbolPerSlot;
     int mu = log2(config.OranSCS / 15.0);
     int slotsPerSubframe = pow(2, mu);
-    int packetsPerSecond=packetsPerSlot*slotsPerSubframe*(1000/config.EthCaptureSizeMs);
-    int bitsPerPacket=packetsPerSecond*12*config.OranNrbPerPacket*16*2;
-    int bytesPerPacket=bitsPerPacket/8;
-    if(bytesPerPacket<config.EthMaxPacketSize) //No fragmentation
+    int packetsPerSecond = packetsPerSlot * slotsPerSubframe * (1000 / config.EthCaptureSizeMs);
+    int bitsPerPacket = packetsPerSecond * 12 * config.OranNrbPerPacket * 16 * 2;
+    int bytesPerPacket = bitsPerPacket / 8;
+    int packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
+    int packetsPerFrame = packetsPerSubframe * 10;
+    if (bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
-        cout<<"No fragmentation "<<config.EthMaxPacketSize<<endl;
-        cout<<bytesPerPacket<<endl;
+        cout << "No fragmentation " << endl;
+        cout << bytesPerPacket << endl;
+        int numberOfPackets = packetsPerSecond * (1000 / config.EthCaptureSizeMs);
 
-    }else { //Fragmentation
-        cout<<"Fragmentation"<<endl;
-        cout<<bytesPerPacket<<endl;
+        int frameId = 1;
+        int subframeId = 1;
+        int slotId = 1;
+        int symbolId = 1;
+
+        for (int i = 0; i < numberOfPackets; ++i)
+        {
+            string destAddress = (config.EthDestAddress);
+            string srcAddress = (config.EthSourceAddress);
+            string ethernetType = "AEFE";
+            if (i % packetsPerSlot == 0)
+            {
+                slotId++;
+            }
+            if (i % packetsPerSymbol == 0)
+            {
+                symbolId++;
+            }
+            if (i % packetsPerSubframe == 0)
+            {
+                subframeId++;
+            }
+            if (i % packetsPerFrame == 0)
+            {
+                frameId++;
+            }
+
+            ORAN oran(frameId, subframeId, slotId, symbolId);
+            ECPRI ecpri(oran);
+            Packet p(destAddress, srcAddress, "AEFE",ecpri.getECPRI());
+        }
     }
-
+    else
+    { // Fragmentation
+        cout << "Fragmentation" << endl;
+        cout << bytesPerPacket << endl;
+    }
 }
 
 long long Program::calculateNumberOfBursts()

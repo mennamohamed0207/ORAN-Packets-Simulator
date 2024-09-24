@@ -9,7 +9,7 @@ class ECPRI{
         string contcatention;
         //Octet 2
         string message;
-        //Octet 3-4
+        //Octet 3-4 //size of ORAN packet 
         string payload;
         //Octet 5-6
         string pId;
@@ -17,6 +17,7 @@ class ECPRI{
         static int seqId;
         //Octet 9-16
         ORAN ORANPacket;
-        ECPRI();
+        ECPRI(ORAN oranpacket);
+        string getECPRI();
 
 };
