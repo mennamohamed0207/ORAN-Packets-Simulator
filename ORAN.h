@@ -7,13 +7,12 @@ class ORAN{
     string payloadVersion;
     string filterIndex;
     //Octet 10
-    int  frameId;
+    string  frameId;
     //Octet 11
-    int  subframeId;
-    int slotId;
+    string  subframeId;
+    string slotId;
     //Octet 12
-    int restOfSlotId;
-    int symbolId;
+    string symbolId;
     //Octet 13
     string sectionId;
     //Octet 14
@@ -31,6 +30,9 @@ class ORAN{
     // ORAN();
     ORAN(int frameId, int subframeId, int slotId, int symbolId);
     string getORAN();
+    string putIdIntoStringOneByte(int id);
+    string putIdIntoStringSixbits(int id );
+    string putIdIntoStringOneDigit(int id );
 
 
 
