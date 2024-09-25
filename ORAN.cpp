@@ -15,29 +15,49 @@ ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSample
     this->payloadSize=payloadSize/2;
     this->iqSamples=fillIQSamples(IQSamplesFileName,samplesIndex);
 }
-string ORAN::fillIQSamples(string IQSamplesFileName,long long samplesIndex)
+string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
 {
-    string iqsamples="";
+    string iqsamples = "";
     std::ifstream file(IQSamplesFileName);
-    if (!file.is_open())
-    {
+    
+    if (!file.is_open()) {
         std::cerr << "Error: Could not open the file " << IQSamplesFileName << std::endl;
         return "Error";
     }
+
     std::string line;
-    int sample=samplesIndex;
-    while (sample<this->payloadSize&&std::getline(file, line))
-    {
-        
-        iqsamples+=iqSamplesToHexa(line);
+    int sample = 0;
 
-        sample++;
+    // Skip to the starting index (samplesIndex)
+    for (int i = 0; i < samplesIndex - 1 && std::getline(file, line); ++i) {
+        // Skip the lines until we reach the sample index
     }
+
+    // Loop to fill samples until payloadSize is reached
+    while (sample < this->payloadSize)
+    {
+        // If the end of the file is reached, loop back to the beginning
+        if (!std::getline(file, line)) {
+            // Reset the file to the beginning
+            file.clear(); // Clear eof and other flags
+            file.seekg(0, std::ios::beg); // Move the cursor to the beginning of the file
+
+            // Read the first line again after resetting
+            if (!std::getline(file, line)) {
+                std::cerr << "Error: Could not read the file again after resetting." << std::endl;
+                return "Error";
+            }
+        }
+
+        // Process the IQ sample line and convert to hexadecimal
+        iqsamples += iqSamplesToHexa(line);
+
+        sample++; // Increment the sample count
+    }
+
     return iqsamples;
-    // file.close();
-
-
 }
+
 string ORAN::iqSamplesToHexa(string line)
 {
     int c = 0;
