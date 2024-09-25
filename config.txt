@@ -1,5 +1,5 @@
-Eth.LineRate = 100
-Eth.CaptureSizeMs = 1000 
+Eth.LineRate = 10
+Eth.CaptureSizeMs = 10 
 Eth.MinNumOfIFGsPerPacket = 12 
 Eth.DestAddress =  0x010101010101
 Eth.SourceAddress = 0x333333333333

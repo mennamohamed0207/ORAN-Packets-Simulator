@@ -24,7 +24,7 @@ void Program::generatePackets(const std::string &outputFile)
     long long packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     long long packetsPerFrame = packetsPerSubframe * 10;
 
-    if (true || bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
+    if (bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
         cout << "No fragmentation " << endl;
         cout << bytesPerPacket << endl;
