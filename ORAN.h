@@ -26,13 +26,15 @@ class ORAN{
     string numPrbu;
     //rest of packet
     string iqSamples;
+    int payloadSize;
 
     // ORAN();
-    ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName);
+    ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName,int payloadSize);
     string getORAN();
     string putIdIntoStringOneByte(int id);
     string putIdIntoStringSixbits(int id );
     string putIdIntoStringOneDigit(int id );
+    string fillIQSamples(string IQSamplesFileName);
 
 
 

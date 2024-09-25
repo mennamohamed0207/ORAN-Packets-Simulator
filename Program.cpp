@@ -54,7 +54,8 @@ void Program::generatePackets(const std::string &outputFile)
             }
             if (i == 30)
                 break;
-            ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload);
+            int payloadSize=config.OranNrbPerPacket*12;
+            ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
             // Alignment
