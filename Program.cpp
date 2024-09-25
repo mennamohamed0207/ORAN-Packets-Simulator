@@ -17,7 +17,10 @@ void Program::generatePackets(const std::string &outputFile)
     int slotsPerSubframe = pow(2, mu);
     int packetsPerSecond = packetsPerSlot * slotsPerSubframe * (1000 / config.EthCaptureSizeMs);
     int bitsPerPacket = packetsPerSecond * 12 * config.OranNrbPerPacket * 16 * 2;
-    int bytesPerPacket = bitsPerPacket / 8;
+    int ethernetHeaderSize = 7 + 1 + 6 + 6 + 2 + 4 ;
+    int ecpriHeaderSize=8;
+    int oranHeaderSize=4;
+    int bytesPerPacket = (bitsPerPacket / 8)+ ethernetHeaderSize+ecpriHeaderSize+oranHeaderSize;
     int packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     int packetsPerFrame = packetsPerSubframe * 10;
     if (true || bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
@@ -106,7 +109,6 @@ int Program::addIFGs(Packet &packet)
 {
 
     int padding = 4 - (packet.getPacket().size() % 4);
-    cout << "Padding: " << padding << endl;
     return padding;
 }
 void Program::dumpPacketsToFile(const std::string &outputFile)

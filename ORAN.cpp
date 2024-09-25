@@ -22,14 +22,15 @@ string ORAN::fillIQSamples(string IQSamplesFileName)
     if (!file.is_open())
     {
         std::cerr << "Error: Could not open the file " << IQSamplesFileName << std::endl;
-        return;
+        return "Error";
     }
     std::string line;
     int sample=0;
-    while (sample>this->payloadSize)
+    while (sample<this->payloadSize&&std::getline(file, line))
     {
         
-        iqsamples+=iqSamplesToHexa(line)
+        iqsamples+=iqSamplesToHexa(line);
+
         sample++;
     }
     return iqsamples;
@@ -39,27 +40,45 @@ string ORAN::fillIQSamples(string IQSamplesFileName)
 }
 string ORAN::iqSamplesToHexa(string line)
 {
-    int c=0;
-    string i="";
-    string q="";
-    while(line[c]!=" ")
+    int c = 0;
+    string i = "";
+    string q = "";
+    
+    // Parse the I part from the input string
+    while(line[c] != ' ')
     {
-        i+=line[c];
+        i += line[c];
         c++;
     }
     c++;
-    q=line.substr(c,line.length()-1);
-    int i_integer=stoi(i);
-    std::stringstream stream;
-    stream << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << i_integer;
-    i=stream.str();
-    int q_integer=stoi(q);
-    std::stringstream streamq;
-    stream << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << q_integer;
-    q=streamq.str();
-    return i+q;
+    
+    // Parse the Q part from the input string
+    q = line.substr(c, line.length() - c);
 
+    // Convert I to integer and handle two's complement for 16-bit signed value
+    int i_integer = stoi(i);
+    if (i_integer < 0)
+        i_integer = (1 << 16) + i_integer;  // Two's complement for negative numbers
+
+    std::stringstream stream;
+    stream << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << (i_integer & 0xFFFF);  // Mask to 16-bit
+
+    i = stream.str();
+    cout << "i= " << i << endl;
+
+    // Convert Q to integer and handle two's complement for 16-bit signed value
+    int q_integer = stoi(q);
+    if (q_integer < 0)
+        q_integer = (1 << 16) + q_integer;  // Two's complement for negative numbers
+
+    std::stringstream streamq;
+    streamq << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << (q_integer & 0xFFFF);  // Mask to 16-bit
+
+    q = streamq.str();
+
+    return i + q;
 }
+
 
 string ORAN::getORAN()
 {

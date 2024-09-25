@@ -35,6 +35,7 @@ class ORAN{
     string putIdIntoStringSixbits(int id );
     string putIdIntoStringOneDigit(int id );
     string fillIQSamples(string IQSamplesFileName);
+    string iqSamplesToHexa(string line);
 
 
 
