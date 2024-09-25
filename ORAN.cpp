@@ -64,7 +64,6 @@ string ORAN::iqSamplesToHexa(string line)
     stream << std::setw(4) << std::setfill('0') << std::hex << std::uppercase << (i_integer & 0xFFFF);  // Mask to 16-bit
 
     i = stream.str();
-    cout << "i= " << i << endl;
 
     // Convert Q to integer and handle two's complement for 16-bit signed value
     int q_integer = stoi(q);

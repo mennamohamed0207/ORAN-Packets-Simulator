@@ -9,20 +9,21 @@ void Program::generatePackets(const std::string &outputFile)
 {
     std::ofstream out(outputFile);
 
-    int numberOfFrames = config.EthCaptureSizeMs / 10;
-    int packetsPerSymbol = ceil(config.OranMaxNrb * 1.0 / config.OranNrbPerPacket);
-    int symbolPerSlot = 14; // Assum normal cyclic prefix
-    int packetsPerSlot = packetsPerSymbol * symbolPerSlot;
-    int mu = log2(config.OranSCS / 15.0);
-    int slotsPerSubframe = pow(2, mu);
-    int packetsPerSecond = packetsPerSlot * slotsPerSubframe * (1000 / config.EthCaptureSizeMs);
-    int bitsPerPacket = packetsPerSecond * 12 * config.OranNrbPerPacket * 16 * 2;
-    int ethernetHeaderSize = 7 + 1 + 6 + 6 + 2 + 4 ;
-    int ecpriHeaderSize=8;
-    int oranHeaderSize=4;
-    int bytesPerPacket = (bitsPerPacket / 8)+ ethernetHeaderSize+ecpriHeaderSize+oranHeaderSize;
-    int packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
-    int packetsPerFrame = packetsPerSubframe * 10;
+    // int numberOfFrames = config.EthCaptureSizeMs / 10;
+    long long packetsPerSymbol = ceil(config.OranMaxNrb * 1.0 / config.OranNrbPerPacket);
+    long long symbolPerSlot = 14; // Assum normal cyclic prefix
+    long long packetsPerSlot = packetsPerSymbol * symbolPerSlot;
+    long long mu = log2(config.OranSCS / 15.0);
+    long long slotsPerSubframe = pow(2, mu);
+    long long packetsPerSecond = packetsPerSlot * slotsPerSubframe * (1000 / config.EthCaptureSizeMs);
+    long long bitsPerPacket = packetsPerSecond * 12 * config.OranNrbPerPacket * 16 * 2;
+    long long ethernetHeaderSize = 7 + 1 + 6 + 6 + 2 + 4;
+    long long ecpriHeaderSize = 8;
+    long long oranHeaderSize = 4;
+    long long bytesPerPacket = (bitsPerPacket / 8) + ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize;
+    long long packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
+    long long packetsPerFrame = packetsPerSubframe * 10;
+
     if (true || bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
         cout << "No fragmentation " << endl;
@@ -33,6 +34,15 @@ void Program::generatePackets(const std::string &outputFile)
         int subframeId = 0;
         int slotId = 0;
         int symbolId = 0;
+        // Calculate IFGs sent
+        long long totalTransmittedBits = numberOfPackets * bytesPerPacket * 8;
+        long long timeOfPacketsMs = ceil(totalTransmittedBits * 1.0 / (config.EthLineRate * pow(10, 6)));
+        long long timeOfIFGsMs = config.EthCaptureSizeMs - timeOfPacketsMs;
+        long long timePerIFG = (8 / config.EthLineRate) + 1; // Because of precision in 8/lineRate it will be zero so I add 1 as I ceil it
+        long long numberOfIFGs = timeOfIFGsMs / timePerIFG;
+        cout << "Number of IFGs " << numberOfIFGs << endl;
+        cout << "Total transmitted bits " << totalTransmittedBits << endl;
+        cout << "Time of packets " << timeOfPacketsMs << endl;
 
         for (int i = 0; i < numberOfPackets; ++i)
         {
@@ -57,7 +67,7 @@ void Program::generatePackets(const std::string &outputFile)
             }
             if (i == 30)
                 break;
-            int payloadSize=config.OranNrbPerPacket*12;
+            int payloadSize = config.OranNrbPerPacket * 12;
             ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
@@ -71,7 +81,7 @@ void Program::generatePackets(const std::string &outputFile)
             }
             if (!isAligned(p.getPacket().size()))
             {
-                int padding = addIFGs(p)/2;
+                int padding = addIFGs(p) / 2;
                 while (padding != 0)
                 {
                     AddedIFG += "07";
@@ -79,7 +89,17 @@ void Program::generatePackets(const std::string &outputFile)
                 }
             }
             p.setIFG(AddedIFG);
-            out << p.getPacket() << endl;
+            out << p.getPacket();
+
+            int count = numberOfIFGs;
+
+            while (count != 0)
+            {
+                out << "07";
+
+                count--;
+            }
+            out<<endl;
         }
     }
     else
