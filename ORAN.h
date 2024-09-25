@@ -29,12 +29,12 @@ class ORAN{
     int payloadSize;
 
     // ORAN();
-    ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName,int payloadSize);
+    ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName,int payloadSize,long long samplesIndex);
     string getORAN();
     string putIdIntoStringOneByte(int id);
     string putIdIntoStringSixbits(int id );
     string putIdIntoStringOneDigit(int id );
-    string fillIQSamples(string IQSamplesFileName);
+    string fillIQSamples(string IQSamplesFileName,long long samplesIndex);
     string iqSamplesToHexa(string line);
 
 

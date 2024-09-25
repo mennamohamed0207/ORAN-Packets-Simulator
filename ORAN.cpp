@@ -5,17 +5,17 @@
 #include <iostream>
 
 
-ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName,int payloadSize)
+ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName,int payloadSize,long long samplesIndex)
 {
     this->dataDirection + this->payloadVersion + this->filterIndex = "00";
     this->frameId = putIdIntoStringOneByte(frameId);
     this->symbolId=putIdIntoStringSixbits(symbolId);
     this->subframeId=putIdIntoStringOneDigit(subframeId);
     this->slotId=putIdIntoStringSixbits(slotId);
-    this->payloadSize=payloadSize;
-    this->iqSamples=fillIQSamples(IQSamplesFileName);
+    this->payloadSize=payloadSize/2;
+    this->iqSamples=fillIQSamples(IQSamplesFileName,samplesIndex);
 }
-string ORAN::fillIQSamples(string IQSamplesFileName)
+string ORAN::fillIQSamples(string IQSamplesFileName,long long samplesIndex)
 {
     string iqsamples="";
     std::ifstream file(IQSamplesFileName);
@@ -25,7 +25,7 @@ string ORAN::fillIQSamples(string IQSamplesFileName)
         return "Error";
     }
     std::string line;
-    int sample=0;
+    int sample=samplesIndex;
     while (sample<this->payloadSize&&std::getline(file, line))
     {
         

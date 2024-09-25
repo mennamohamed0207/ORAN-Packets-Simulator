@@ -9,9 +9,8 @@ void Program::generatePackets(const std::string &outputFile)
 {
     std::ofstream out(outputFile);
 
-    // int numberOfFrames = config.EthCaptureSizeMs / 10;
     long long packetsPerSymbol = ceil(config.OranMaxNrb * 1.0 / config.OranNrbPerPacket);
-    long long symbolPerSlot = 14; // Assum normal cyclic prefix
+    long long symbolPerSlot = 14; // Assuming normal cyclic prefix
     long long packetsPerSlot = packetsPerSymbol * symbolPerSlot;
     long long mu = log2(config.OranSCS / 15.0);
     long long slotsPerSubframe = pow(2, mu);
@@ -23,12 +22,14 @@ void Program::generatePackets(const std::string &outputFile)
     long long bytesPerPacket = (bitsPerPacket / 8) + ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize;
     long long packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     long long packetsPerFrame = packetsPerSubframe * 10;
+    int numberOfPackets = packetsPerSecond * (1000 / config.EthCaptureSizeMs);
+    long long numberOfSamples = 12 * numberOfPackets * config.OranNrbPerPacket;
+    long long indexOfSamples = 0;
 
     if (bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
         cout << "No fragmentation " << endl;
         cout << bytesPerPacket << endl;
-        int numberOfPackets = packetsPerSecond * (1000 / config.EthCaptureSizeMs);
 
         int frameId = 0;
         int subframeId = 0;
@@ -43,7 +44,6 @@ void Program::generatePackets(const std::string &outputFile)
         cout << "Number of IFGs " << numberOfIFGs << endl;
         cout << "Total transmitted bits " << totalTransmittedBits << endl;
         cout << "Time of packets " << timeOfPacketsMs << endl;
-
         for (int i = 0; i < numberOfPackets; ++i)
         {
             string destAddress = (config.EthDestAddress);
@@ -65,12 +65,12 @@ void Program::generatePackets(const std::string &outputFile)
             {
                 frameId++;
             }
-            if (i == 30)
-                break;
-            int payloadSize = config.OranNrbPerPacket * 12;
-            ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize);
+            
+            int payloadSize =(bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize));
+            ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize, indexOfSamples);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
+            indexOfSamples += payloadSize;
             // Alignment
             int IFGs = config.EthMinNumOfIFGsPerPacket;
             string AddedIFG = "";
@@ -99,14 +99,81 @@ void Program::generatePackets(const std::string &outputFile)
 
                 count--;
             }
-            out<<endl;
+            out << endl;
         }
     }
     else
-    { // Fragmentation
+    { // Fragmentation logic
         cout << "Fragmentation" << endl;
         cout << bytesPerPacket << endl;
+
+        int frameId = 0;
+        int subframeId = 0;
+        int slotId = 0;
+        int symbolId = 0;
+
+        for (int i = 0; i < numberOfPackets; ++i)
+        {
+            string destAddress = (config.EthDestAddress);
+            string srcAddress = (config.EthSourceAddress);
+            string ethernetType = "AEFE";
+
+            if (i % packetsPerSlot == 0)
+                slotId++;
+            if (i % packetsPerSymbol == 0)
+                symbolId++;
+            if (i % packetsPerSubframe == 0)
+                subframeId++;
+            if (i % packetsPerFrame == 0)
+                frameId++;
+
+
+            // Fragmentation logic begins here
+            int maxPayloadSize = (config.EthMaxPacketSize) - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize);
+            int totalPayloadSize = bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize);
+            int fragments = ceil(totalPayloadSize * 1.0 / maxPayloadSize);
+            
+            for (int f = 0; f < fragments; ++f)
+            {
+                int fragmentPayloadSize = std::min(maxPayloadSize, totalPayloadSize - (f * maxPayloadSize));
+                // Create fragment
+                ORAN fragmentOran(frameId, subframeId, slotId, symbolId, config.OranPayload , fragmentPayloadSize, indexOfSamples);
+                indexOfSamples += fragmentPayloadSize;
+                ECPRI fragmentEcpri(fragmentOran);
+                Packet fragmentPacket(destAddress, srcAddress, ethernetType, fragmentEcpri.getECPRI());
+
+                // Alignment and IFG handling remains the same
+                int IFGs = config.EthMinNumOfIFGsPerPacket;
+                string AddedIFG = "";
+                while (IFGs != 0)
+                {
+                    AddedIFG += "07";
+                    IFGs--;
+                }
+                if (!isAligned(fragmentPacket.getPacket().size()))
+                {
+                    int padding = addIFGs(fragmentPacket) / 2;
+                    while (padding != 0)
+                    {
+                        AddedIFG += "07";
+                        padding--;
+                    }
+                }
+                fragmentPacket.setIFG(AddedIFG);
+                out << fragmentPacket.getPacket();
+
+                // Add the IFGs between packets
+                int count = config.EthMinNumOfIFGsPerPacket;
+                while (count != 0)
+                {
+                    out << "07";
+                    count--;
+                }
+                out << endl;
+            }
+        }
     }
+
     out.close();
 }
 
