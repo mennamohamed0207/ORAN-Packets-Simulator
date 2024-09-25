@@ -20,7 +20,7 @@ public:
     // void writeFile();
     bool fileExists(const std::string &fileName);
     void generatePackets(const std::string &outputFile);
-    void addIFGs(Packet &packet);
+    int addIFGs(Packet &packet);
     bool isAligned(int packetSize);
     void dumpPacketsToFile(const std::string &outputFile);
     configurations getConfig();

@@ -20,7 +20,7 @@ void Program::generatePackets(const std::string &outputFile)
     int bytesPerPacket = bitsPerPacket / 8;
     int packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     int packetsPerFrame = packetsPerSubframe * 10;
-    if (true||bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
+    if (true || bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
         cout << "No fragmentation " << endl;
         cout << bytesPerPacket << endl;
@@ -52,11 +52,30 @@ void Program::generatePackets(const std::string &outputFile)
             {
                 frameId++;
             }
-            if(i==30) break;
-            ORAN oran(frameId, subframeId, slotId, symbolId,config.OranPayload);
+            if (i == 30)
+                break;
+            ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
-            out<<p.getPacket() << endl;
+            // Alignment
+            int IFGs = config.EthMinNumOfIFGsPerPacket;
+            string AddedIFG = "";
+            while (IFGs != 0)
+            {
+                AddedIFG += "07";
+                IFGs--;
+            }
+            if (!isAligned(p.getPacket().size()))
+            {
+                int padding = addIFGs(p)/2;
+                while (padding != 0)
+                {
+                    AddedIFG += "07";
+                    padding--;
+                }
+            }
+            p.setIFG(AddedIFG);
+            out << p.getPacket() << endl;
         }
     }
     else
@@ -82,15 +101,12 @@ bool Program::isAligned(int packetSize)
     return packetSize % 4 == 0;
 }
 
-void Program::addIFGs(Packet &packet)
+int Program::addIFGs(Packet &packet)
 {
 
     int padding = 4 - (packet.getPacket().size() % 4);
-    // string packet=packet.getPacket();
-    for (int i = 0; i < padding; ++i)
-    {
-        packet.getPacket() += "07";
-    }
+    cout << "Padding: " << padding << endl;
+    return padding;
 }
 void Program::dumpPacketsToFile(const std::string &outputFile)
 {
