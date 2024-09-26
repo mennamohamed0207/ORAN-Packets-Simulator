@@ -6,8 +6,7 @@ class ECPRI
 public:
     // Octet 1
     string version;
-    string reserved;
-    string contcatention;
+    string reservedAndContcatention;
     // Octet 2
     string message;
     // Octet 3-4 //size of ORAN packet

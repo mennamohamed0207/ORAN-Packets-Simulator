@@ -14,6 +14,11 @@ ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSample
     this->slotId=putIdIntoStringSixbits(slotId);
     this->payloadSize=payloadSize/2;
     this->iqSamples=fillIQSamples(IQSamplesFileName,samplesIndex);
+    this->sectionId="00";
+    this->restOfSectionId+this->rb+this->symInc+this->startPrbu="00";
+    this->restOfStartPrbu="00";
+    this->numPrbu="00";
+
 }
 string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
 {
