@@ -7,7 +7,7 @@
 
 ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSamplesFileName,int payloadSize,long long samplesIndex)
 {
-    this->dataDirection + this->payloadVersion + this->filterIndex = "00";
+    this->dataDirectionAndpayloadVersionAndfilterIndex = "00";
     this->frameId = putIdIntoStringOneByte(frameId);
     this->symbolId=putIdIntoStringSixbits(symbolId);
     this->subframeId=putIdIntoStringOneDigit(subframeId);
@@ -106,11 +106,11 @@ string ORAN::iqSamplesToHexa(string line)
 
 string ORAN::getORAN()
 {
-    return this->dataDirection + this->payloadVersion + this->filterIndex + 
-    (this->frameId) + 
-    (this->subframeId) + 
-    (this->slotId)  + 
-    (this->symbolId) + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
+    return this->dataDirectionAndpayloadVersionAndfilterIndex + 
+   "Frame is "+ (this->frameId) + 
+    "subframe is "+  (this->subframeId) + 
+    "Slot is "+(this->slotId)  + 
+    "symbol is "+(this->symbolId)+" " + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
 }
 string ORAN::putIdIntoStringOneByte(int id)
 {

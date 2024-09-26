@@ -3,9 +3,8 @@ using namespace std;
 class ORAN{
     public:
     //Octet 9
-    string dataDirection;
-    string payloadVersion;
-    string filterIndex;
+    string dataDirectionAndpayloadVersionAndfilterIndex;
+
     //Octet 10
     string  frameId;
     //Octet 11
