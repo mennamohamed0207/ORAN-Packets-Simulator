@@ -18,21 +18,21 @@ void Program::generatePackets(const std::string &outputFile)
     long long framesPerSecond=100;
     long long packetsPerSecond = packetsPerSlot * slotsPerFrame*framesPerSecond; 
     long long packetsPerCaptureSize=packetsPerSecond*config.EthCaptureSizeMs*pow(10,-3);
-    long long bitsPerPacket = packetsPerCaptureSize * 12 * config.OranNrbPerPacket * 16 * 2*(config.EthCaptureSizeMs)*pow(10,-3);
-    long long ethernetHeaderSize = 7 + 1 + 6 + 6 + 2 + 4;
+    long long bitsPerPacket =  12 * config.OranNrbPerPacket * 16 * 2;
+    
+    long long ethernetHeaderSize = 26;
     long long ecpriHeaderSize = 8;
-    long long oranHeaderSize = 4;
+    long long oranHeaderSize = 8;
     long long bytesPerPacket = (bitsPerPacket / 8) + ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize;
     long long packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     long long packetsPerFrame = packetsPerSubframe * 10;
     int numberOfPackets = packetsPerCaptureSize;
-    long long numberOfSamples = 12 * numberOfPackets * config.OranNrbPerPacket;
     long long indexOfSamples = 0;
     cout<<"Number of packets "<<numberOfPackets<<endl;
         // Calculate IFGs sent
         long long totalTransmittedBits = numberOfPackets * bytesPerPacket * 8;
         long long timeOfPacketsMs = ceil(totalTransmittedBits * 1.0 / (config.EthLineRate * pow(10, 6)));
-        long long timeOfIFGsMs = config.EthCaptureSizeMs - timeOfPacketsMs;
+        long long timeOfIFGsMs = (config.EthCaptureSizeMs - timeOfPacketsMs)*1000;
         long long timePerIFG = (8 / config.EthLineRate) + 1; // Because of precision in 8/lineRate it will be zero so I add 1 as I ceil it
         long long numberOfIFGs = timeOfIFGsMs / timePerIFG;
         cout << "Number of IFGs " << numberOfIFGs << endl;
@@ -60,7 +60,10 @@ void Program::generatePackets(const std::string &outputFile)
             }
             if (i % packetsPerSymbol == 0)
             {
+               cout<<endl<<i<<endl;
+
                 symbolId++;
+                symbolId=symbolId%14;
             }
             if (i % packetsPerSubframe == 0)
             {
@@ -95,7 +98,9 @@ void Program::generatePackets(const std::string &outputFile)
             }
             p.setIFG(AddedIFG);
             out << p.getPacket();
+            out << endl;
 
+        }
             int count = numberOfIFGs;
 
             while (count != 0)
@@ -104,8 +109,7 @@ void Program::generatePackets(const std::string &outputFile)
 
                 count--;
             }
-            out << endl;
-        }
+            
     }
     else
     { // Fragmentation logic
