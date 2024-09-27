@@ -10,7 +10,7 @@ ECPRI::ECPRI(ORAN oranpacket)
     this->message = "00";
     this->pId = "0000";
     this->payload=putIdIntoStringTwoByte((oranpacket.payloadSize)*2);
-    std::cout<<"Size is "<<(oranpacket.payloadSize)*2<<"and hexa is "<<this->payload<<endl;
+    // std::cout<<"Size is "<<(oranpacket.payloadSize)*2<<"and hexa is "<<this->payload<<endl;
     seqId++;
     if (seqId == 255)
         seqId = 0;

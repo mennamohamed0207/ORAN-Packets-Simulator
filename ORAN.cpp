@@ -134,9 +134,9 @@ string ORAN::putIdIntoStringSixbits(int id)
 }
 string ORAN::putIdIntoStringOneDigit(int id)
 {
-    if(id < 0 || id > 9)
+    if(id < 0 || id > 15)
     {
-        throw std::out_of_range("Number must be between 0 and 9.");
+        throw std::out_of_range("Number must be between 0 and 15.");
     }
     std::stringstream stream;
     stream << std::setw(1) << std::setfill('0') << std::hex << std::uppercase << id;

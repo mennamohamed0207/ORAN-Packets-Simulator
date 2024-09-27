@@ -60,7 +60,7 @@ void Program::generatePackets(const std::string &outputFile)
             }
             if (i % packetsPerSymbol == 0)
             {
-               cout<<endl<<i<<endl;
+            //    cout<<endl<<i<<endl;
 
                 symbolId++;
                 symbolId=symbolId%14;
