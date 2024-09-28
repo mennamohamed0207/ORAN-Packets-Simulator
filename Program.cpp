@@ -31,11 +31,25 @@ void Program::generatePackets(const std::string &outputFile)
     long long indexOfSamples = 0;
     cout<<"Number of packets "<<numberOfPackets<<endl;
         // Calculate IFGs sent
+        cout<<"bytesPerPacket before alignment"<<bytesPerPacket<<endl;
+         if (!isAligned((bytesPerPacket)))
+            {
+                int padding = 4 - ((bytesPerPacket) % 4);
+                // cout<<padding<<endl;
+                while (padding != 0)
+                {
+                    bytesPerPacket++;
+                    padding--;
+                }
+            }
         long long totalTransmittedBits = numberOfPackets * bytesPerPacket * 8;
+        long long totalPossibleBits=config.EthLineRate*pow(10,9)*config.EthCaptureSizeMs*pow(10,-3);
+        long long numberOfIFGsBytes=(totalPossibleBits/8)-(bytesPerPacket*numberOfPackets);
+        cout<<"bytesPerPacket after alignment"<<bytesPerPacket<<endl;
         long long timeOfPacketsMs = ceil(totalTransmittedBits * 1.0 / (config.EthLineRate * pow(10, 6)));
         long long timeOfIFGsMs = (config.EthCaptureSizeMs - timeOfPacketsMs)*1000;
         long long timePerIFG = (8 / config.EthLineRate) + 1; // Because of precision in 8/lineRate it will be zero so I add 1 as I ceil it
-        long long numberOfIFGs = timeOfIFGsMs / timePerIFG;
+        long long numberOfIFGs = numberOfIFGsBytes;
         cout << "Number of IFGs " << numberOfIFGs << endl;
         cout << "Total transmitted bits " << totalTransmittedBits << endl;
         cout << "Time of packets " << timeOfPacketsMs << endl;
@@ -74,13 +88,14 @@ void Program::generatePackets(const std::string &outputFile)
                 frameId++;
             }
 
-            int payloadSize = (bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize));
+            int payloadSize = (bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize+config.EthMinNumOfIFGsPerPacket));
             // cout<<"Payload "<<payloadSize<<endl;
             
             ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize, indexOfSamples);
             
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
+
             //Print all sizes
             // cout<<"ORAN Size "<<(oran.getORAN().length())<<endl;
             // cout<<"ECPRI Size "<<ecpri.getECPRI().length()<<endl;
@@ -94,6 +109,9 @@ void Program::generatePackets(const std::string &outputFile)
                 AddedIFG += "07";
                 IFGs--;
             }
+            p.setIFG(AddedIFG);
+
+
             if (!isAligned((p.getPacket().length()/2)))
             {
                 int padding = addIFGs(p) ;
@@ -105,6 +123,8 @@ void Program::generatePackets(const std::string &outputFile)
                 }
             }
             p.setIFG(AddedIFG);
+            // cout<<p.getPacket().length()<<endl;
+
             out << p.getPacket();
             out << endl;
 
