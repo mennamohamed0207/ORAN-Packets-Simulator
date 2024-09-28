@@ -113,79 +113,9 @@ void Program::generatePackets(const std::string &outputFile)
     }
     else
     { // Fragmentation logic
-        cout << "Fragmentation" << endl;
-        cout << bytesPerPacket << endl;
-        
-
-        int frameId = 0;
-        int subframeId = 0;
-        int slotId = 0;
-        int symbolId = 0;
-
-        for (int i = 0; i < numberOfPackets; ++i)
-        {
-            string destAddress = (config.EthDestAddress);
-            string srcAddress = (config.EthSourceAddress);
-            string ethernetType = "AEFE";
-
-            if (i % packetsPerSlot == 0)
-                slotId++;
-            if (i % packetsPerSymbol == 0)
-                symbolId++;
-            if (i % packetsPerSubframe == 0)
-                subframeId++;
-            if (i % packetsPerFrame == 0)
-                frameId++;
-            if(i==3) break;
-
-            // Fragmentation logic begins here
-            int maxPayloadSize = (config.EthMaxPacketSize) - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize);
-            int totalPayloadSize = bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize);
-            int fragments = ceil(totalPayloadSize * 1.0 / maxPayloadSize);
-            cout << "Fragments " << fragments << endl;
-            // return;
-            for (int f = 0; f < fragments; ++f)
-            {
-                int fragmentPayloadSize = std::min(maxPayloadSize, totalPayloadSize - (f * maxPayloadSize));
-                // cout<<"Frangment Payload "<<fragmentPayloadSize<<endl;
-                // Create fragment
-                ORAN fragmentOran(frameId, subframeId, slotId, symbolId, config.OranPayload, fragmentPayloadSize, indexOfSamples);
-                indexOfSamples += fragmentPayloadSize;
-                ECPRI fragmentEcpri(fragmentOran);
-                Packet fragmentPacket(destAddress, srcAddress, ethernetType, fragmentEcpri.getECPRI());
-
-                // Alignment and IFG handling remains the same
-                int IFGs = config.EthMinNumOfIFGsPerPacket;
-                string AddedIFG = "";
-                while (IFGs != 0)
-                {
-                    AddedIFG += "07";
-                    IFGs--;
-                }
-                if (!isAligned(fragmentPacket.getPacket().size()))
-                {
-                    int padding = addIFGs(fragmentPacket) / 2;
-                    while (padding != 0)
-                    {
-                        AddedIFG += "07";
-                        padding--;
-                    }
-                }
-                fragmentPacket.setIFG(AddedIFG);
-                out << fragmentPacket.getPacket();
-
-                // Add the IFGs between packets
-                int count = numberOfIFGs;
-                
-                while (count > 0)
-                {
-                    out << "07";
-                    count--;
-                }
-                out << endl;
-            }
-            indexOfSamples=0;
-        }
+       cout<<"Warning : There is fragmentation you can solve it by increaseing the maxPacketSize to "<<bytesPerPacket<<" bytes"<<endl;
+       cout<<"Or by you can decrease NRBs"<<endl;
+    
     }
 
     out.close();
