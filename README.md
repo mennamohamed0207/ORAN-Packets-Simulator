@@ -1,7 +1,7 @@
 # ORAN-Packets-Simulator
 ## How to run 
-- Run exe file ORANPAcketsSimulator.exee
+- Run exe file ORANPacketsSimulator.exee
   ```sh
-  .\EthernetSimulator.exe
+  .\ORANPacketsSimulator.exe
   ```
 - write the path of config file and output starting from where exe file exist
