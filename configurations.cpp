@@ -29,6 +29,14 @@ string configurations::trim(const std::string& str) {
     // Return the trimmed string
     return std::string(start, end);
 }
+// Function to remove comments from a line
+string configurations::removeComments(const std::string& line) {
+    size_t commentPos = line.find("//");
+    if (commentPos != std::string::npos) {
+        return line.substr(0, commentPos);  // Return the part before the comment
+    }
+    return line;  // No comment found, return the original line
+}
 void configurations::printConfigurations()
 {
     std::cout << "EthLineRate: " << EthLineRate << std::endl;
@@ -105,7 +113,8 @@ void configurations::readConfigurations(string configurationFile)
     std::string line;
     while (std::getline(file, line))
     {
-        cout << line << endl;
+        // cout << line << endl;
+        line =this->removeComments(line);
         if (line.find("Eth.LineRate") != std::string::npos)
         {
             EthLineRate = getNumberAfterEqual(line);

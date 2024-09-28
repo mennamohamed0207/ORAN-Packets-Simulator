@@ -32,5 +32,6 @@ private:
     string getAddress(const std::string &str);
     string getString(const std::string &str);
     string trim(const std::string& str);
+    string removeComments(const std::string& line);
 };
 #endif
