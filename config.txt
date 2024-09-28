@@ -10,4 +10,4 @@ Oran.MaxNrb = 273
 Oran.NrbPerPacket = 30 
 
 Oran.PayloadType = fixed 
-Oran.Payload = ../iq_file.txt
+Oran.Payload = iq_file.txt

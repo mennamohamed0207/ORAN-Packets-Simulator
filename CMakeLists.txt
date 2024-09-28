@@ -18,7 +18,6 @@ add_executable(ORANPacketsSimulator
         main.cpp 
         Program.cpp 
         configurations.cpp 
-        parser.cpp 
         Packet.cpp
         ECPRI.cpp
         ORAN.cpp

@@ -1,0 +1,3 @@
+F:\LockD\CMP2025\Third_Year\Second_Term\Computer_Graphics\CMake\bin\cmake.exe -E rm -f CMakeFiles\ORANPacketsSimulator.dir/objects.a
+C:\Users\dell\Downloads\gcc-13.2.0-no-debug\bin\ar.exe qc CMakeFiles\ORANPacketsSimulator.dir/objects.a @CMakeFiles\ORANPacketsSimulator.dir\objects1.rsp
+C:\Users\dell\Downloads\gcc-13.2.0-no-debug\bin\g++.exe  -D_GLIBCXX_USE_CXX11_ABI=1 -Wl,--whole-archive CMakeFiles\ORANPacketsSimulator.dir/objects.a -Wl,--no-whole-archive -o ORANPacketsSimulator.exe -Wl,--out-implib,libORANPacketsSimulator.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\ORANPacketsSimulator.dir\linkLibs.rsp
