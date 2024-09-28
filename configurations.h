@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm> 
+#include <cctype> 
 using namespace std;
 #ifndef CONFIGURATIONS_H
 #define CONFIGURATIONS_H
@@ -29,5 +31,6 @@ private:
     int getNumberAfterEqual(const std::string &str);
     string getAddress(const std::string &str);
     string getString(const std::string &str);
+    string trim(const std::string& str);
 };
 #endif

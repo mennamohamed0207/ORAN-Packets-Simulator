@@ -9,6 +9,26 @@ configurations::configurations()
     EthSourceAddress = "";
     EthMaxPacketSize = 0;
 }
+// Function to trim leading and trailing whitespace characters
+string configurations::trim(const std::string& str) {
+    // Find the position of the first non-whitespace character
+    auto start = std::find_if_not(str.begin(), str.end(), [](unsigned char c) {
+        return std::isspace(c);
+    });
+
+    // Find the position of the last non-whitespace character
+    auto end = std::find_if_not(str.rbegin(), str.rend(), [](unsigned char c) {
+        return std::isspace(c);
+    }).base();
+
+    // Check if the entire string is whitespace
+    if (start >= end) {
+        return "";
+    }
+
+    // Return the trimmed string
+    return std::string(start, end);
+}
 void configurations::printConfigurations()
 {
     std::cout << "EthLineRate: " << EthLineRate << std::endl;
@@ -131,10 +151,10 @@ void configurations::readConfigurations(string configurationFile)
         }
         else if (line.find("Oran.Payload") != std::string::npos)
         {
-            OranPayload = getString(line);
+            OranPayload = this->trim(getString(line));
         }
     }
-    printConfigurations();
+    // printConfigurations();
 
     file.close();
 }
