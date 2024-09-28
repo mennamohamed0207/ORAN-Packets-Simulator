@@ -17,27 +17,28 @@ void Program::generatePackets(const std::string &outputFile)
     long long slotsPerFrame = slotsPerSubframe * 10;
     long long framesPerSecond=100;
     long long packetsPerSecond = packetsPerSlot * slotsPerFrame*framesPerSecond; 
+    cout<<"Packets per second "<<packetsPerSecond<<endl;
     long long packetsPerCaptureSize=packetsPerSecond*config.EthCaptureSizeMs*pow(10,-3);
     long long bitsPerPacket =  12 * config.OranNrbPerPacket * 16 * 2;
     
     long long ethernetHeaderSize = 26;
     long long ecpriHeaderSize = 8;
     long long oranHeaderSize = 8;
-    long long bytesPerPacket = (bitsPerPacket / 8) + ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize;
+    long long bytesPerPacket = (bitsPerPacket / 8) + ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize+config.EthMinNumOfIFGsPerPacket;
     long long packetsPerSubframe = packetsPerSlot * slotsPerSubframe;
     long long packetsPerFrame = packetsPerSubframe * 10;
     int numberOfPackets = packetsPerCaptureSize;
     long long indexOfSamples = 0;
-    // cout<<"Number of packets "<<numberOfPackets<<endl;
+    cout<<"Number of packets "<<numberOfPackets<<endl;
         // Calculate IFGs sent
         long long totalTransmittedBits = numberOfPackets * bytesPerPacket * 8;
         long long timeOfPacketsMs = ceil(totalTransmittedBits * 1.0 / (config.EthLineRate * pow(10, 6)));
         long long timeOfIFGsMs = (config.EthCaptureSizeMs - timeOfPacketsMs)*1000;
         long long timePerIFG = (8 / config.EthLineRate) + 1; // Because of precision in 8/lineRate it will be zero so I add 1 as I ceil it
         long long numberOfIFGs = timeOfIFGsMs / timePerIFG;
-        // cout << "Number of IFGs " << numberOfIFGs << endl;
-        // cout << "Total transmitted bits " << totalTransmittedBits << endl;
-        // cout << "Time of packets " << timeOfPacketsMs << endl;
+        cout << "Number of IFGs " << numberOfIFGs << endl;
+        cout << "Total transmitted bits " << totalTransmittedBits << endl;
+        cout << "Time of packets " << timeOfPacketsMs << endl;
 
     if (bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
@@ -77,6 +78,7 @@ void Program::generatePackets(const std::string &outputFile)
             // cout<<"Payload "<<payloadSize<<endl;
             
             ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize, indexOfSamples);
+            
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
             //Print all sizes
