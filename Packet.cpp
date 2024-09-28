@@ -86,7 +86,7 @@ string Packet::getIFG()
 }
 string Packet::getPacket()
 {
-    return preamble + SOP + destAddress + srcAddress + ethernetType + payload +"    "+ CRC + IFG;
+    return preamble + SOP + destAddress + srcAddress + ethernetType + payload + CRC + IFG;
 }
 void Packet::setPreamble(string preamble)
 {

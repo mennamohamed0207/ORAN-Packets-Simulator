@@ -107,10 +107,10 @@ string ORAN::iqSamplesToHexa(string line)
 string ORAN::getORAN()
 {
     return this->dataDirectionAndpayloadVersionAndfilterIndex + 
-   "Frame is "+ (this->frameId) + 
-    "subframe is "+  (this->subframeId) + 
-    "Slot is "+(this->slotId)  + 
-    "symbol is "+(this->symbolId)+" " + this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
+   (this->frameId) + 
+     (this->subframeId) + 
+    (this->slotId)  + 
+    (this->symbolId)+ this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
 }
 string ORAN::putIdIntoStringOneByte(int id)
 {

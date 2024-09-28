@@ -107,7 +107,10 @@ void Program::generatePackets(const std::string &outputFile)
             {
                 out << "07";
 
+                if(bytesPerPacket %count ==0)
+                    cout<<endl;
                 count--;
+            
             }
             
     }
