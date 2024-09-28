@@ -75,9 +75,15 @@ void Program::generatePackets(const std::string &outputFile)
             }
 
             int payloadSize = (bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize));
+            cout<<"Payload "<<payloadSize<<endl;
+            
             ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize, indexOfSamples);
             ECPRI ecpri(oran);
             Packet p(destAddress, srcAddress, "AEFE", ecpri.getECPRI());
+            //Print all sizes
+            // cout<<"ORAN Size "<<(oran.getORAN().length())<<endl;
+            // cout<<"ECPRI Size "<<ecpri.getECPRI().length()<<endl;
+            cout<<"Packet "<<p.getPacket().length()<<endl;
             indexOfSamples += payloadSize;
             // Alignment
             int IFGs = config.EthMinNumOfIFGsPerPacket;
@@ -87,9 +93,10 @@ void Program::generatePackets(const std::string &outputFile)
                 AddedIFG += "07";
                 IFGs--;
             }
-            if (!isAligned(p.getPacket().size()))
+            if (!isAligned((p.getPacket().length()/2)))
             {
-                int padding = addIFGs(p) / 2;
+                int padding = addIFGs(p) ;
+                // cout<<padding<<endl;
                 while (padding != 0)
                 {
                     AddedIFG += "07";
@@ -142,7 +149,9 @@ bool Program::isAligned(int packetSize)
 int Program::addIFGs(Packet &packet)
 {
 
-    int padding = 4 - (packet.getPacket().size() % 4);
+    cout<<packet.getPacket().length()<<endl;
+    int padding = 4 - ((packet.getPacket().length()/2) % 4);
+    // cout<<padding<<endl;
     return padding;
 }
 void Program::dumpPacketsToFile(const std::string &outputFile)

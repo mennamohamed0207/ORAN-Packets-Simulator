@@ -15,10 +15,7 @@ class ORAN{
     //Octet 13
     string sectionId;
     //Octet 14
-    string restOfSectionId;
-    string rb;
-    string symInc;
-    string startPrbu;
+    string Octet14;
     //Octet 15
     string restOfStartPrbu;
     //Octet 16

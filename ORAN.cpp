@@ -9,15 +9,16 @@ ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSample
 {
     this->dataDirectionAndpayloadVersionAndfilterIndex = "00";
     this->frameId = putIdIntoStringOneByte(frameId);
-    this->symbolId=putIdIntoStringSixbits(symbolId);
+    this->symbolId=putIdIntoStringOneDigit(symbolId);
     this->subframeId=putIdIntoStringOneDigit(subframeId);
     this->slotId=putIdIntoStringSixbits(slotId);
-    this->payloadSize=payloadSize/2;
+    this->payloadSize=payloadSize/4;
     this->iqSamples=fillIQSamples(IQSamplesFileName,samplesIndex);
     this->sectionId="00";
-    this->restOfSectionId+this->rb+this->symInc+this->startPrbu="00";
+    this->Octet14="00";
     this->restOfStartPrbu="00";
     this->numPrbu="00";
+    cout<<"size of IQ is "<<this->iqSamples.length()<<endl;
 
 }
 string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
@@ -34,7 +35,7 @@ string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
     int sample = 0;
 
     // Skip to the starting index (samplesIndex)
-    for (int i = 0; i < samplesIndex - 1 && std::getline(file, line); ++i) {
+    for (int i = 0; i <= samplesIndex - 1 && std::getline(file, line); ++i) {
         // Skip the lines until we reach the sample index
     }
 
@@ -59,6 +60,7 @@ string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
 
         sample++; // Increment the sample count
     }
+    cout<<"sample "<<sample<<endl;
 
     return iqsamples;
 }
@@ -108,9 +110,9 @@ string ORAN::getORAN()
 {
     return this->dataDirectionAndpayloadVersionAndfilterIndex + 
    (this->frameId) + 
-     (this->subframeId) + 
+    (this->subframeId) + 
     (this->slotId)  + 
-    (this->symbolId)+ this->sectionId + this->restOfSectionId + this->rb + this->symInc + this->startPrbu + this->restOfStartPrbu + this->numPrbu + this->iqSamples;
+    (this->symbolId)+ this->sectionId + this->Octet14 +this->restOfStartPrbu+this->numPrbu+this->iqSamples;
 }
 string ORAN::putIdIntoStringOneByte(int id)
 {
