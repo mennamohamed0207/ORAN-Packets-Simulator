@@ -41,8 +41,7 @@ void Program::generatePackets(const std::string &outputFile)
 
     if (bytesPerPacket < config.EthMaxPacketSize) // No fragmentation
     {
-        // cout << "No fragmentation " << endl;
-        // cout << bytesPerPacket << endl;
+        // cout << "No fragmentation and size of Packet is " <<bytesPerPacket<< endl;
 
         int frameId = 0;
         int subframeId = 0;
@@ -75,7 +74,7 @@ void Program::generatePackets(const std::string &outputFile)
             }
 
             int payloadSize = (bytesPerPacket - (ethernetHeaderSize + ecpriHeaderSize + oranHeaderSize));
-            cout<<"Payload "<<payloadSize<<endl;
+            // cout<<"Payload "<<payloadSize<<endl;
             
             ORAN oran(frameId, subframeId, slotId, symbolId, config.OranPayload, payloadSize, indexOfSamples);
             ECPRI ecpri(oran);
@@ -83,7 +82,7 @@ void Program::generatePackets(const std::string &outputFile)
             //Print all sizes
             // cout<<"ORAN Size "<<(oran.getORAN().length())<<endl;
             // cout<<"ECPRI Size "<<ecpri.getECPRI().length()<<endl;
-            cout<<"Packet "<<p.getPacket().length()<<endl;
+            // cout<<"Packet "<<p.getPacket().length()<<endl;
             indexOfSamples += payloadSize;
             // Alignment
             int IFGs = config.EthMinNumOfIFGsPerPacket;
@@ -114,8 +113,7 @@ void Program::generatePackets(const std::string &outputFile)
             {
                 out << "07";
 
-                if(count % bytesPerPacket  ==0)
-                    out<<endl;
+                
                 count--;
             
             }
@@ -149,7 +147,7 @@ bool Program::isAligned(int packetSize)
 int Program::addIFGs(Packet &packet)
 {
 
-    cout<<packet.getPacket().length()<<endl;
+    // cout<<packet.getPacket().length()<<endl;
     int padding = 4 - ((packet.getPacket().length()/2) % 4);
     // cout<<padding<<endl;
     return padding;

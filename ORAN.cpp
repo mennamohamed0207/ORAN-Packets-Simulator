@@ -18,7 +18,7 @@ ORAN::ORAN(int frameId, int subframeId, int slotId, int symbolId,string IQSample
     this->Octet14="00";
     this->restOfStartPrbu="00";
     this->numPrbu="00";
-    cout<<"size of IQ is "<<this->iqSamples.length()<<endl;
+    // cout<<"size of IQ is "<<this->iqSamples.length()<<endl;
 
 }
 string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
@@ -60,7 +60,7 @@ string ORAN::fillIQSamples(string IQSamplesFileName, long long samplesIndex)
 
         sample++; // Increment the sample count
     }
-    cout<<"sample "<<sample<<endl;
+    // cout<<"sample "<<sample<<endl;
 
     return iqsamples;
 }
